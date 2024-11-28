@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 90%;
+            }
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            var contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
+            document.getElementById("manageForm").action = contextPath + "/manage_user";
+        };
+
+        function validateForm() {
+            var action = document.getElementById("action").value;
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            var userIdDelete = document.getElementById("idDelete").value;
+            var userIdUpdate = document.getElementById("idUpdate").value;
+
+            var errorMessage = "";
+
+            if (action === "insert" || action === "update") {
+                if (username === "") {
+                    errorMessage += "Username is required.\n";
+                }
+                if (password === "") {
+                    errorMessage += "Password is required.\n";
+                }
+            }
+
+            if (action === "update" && userIdUpdate === "") {
+                errorMessage += "User ID is required for update.\n";
+            }
+
+            if (action === "delete" && userIdDelete === "") {
+                errorMessage += "User ID is required for delete.\n";
+            }
+
+            if (errorMessage) {
+                document.getElementById("error-message").textContent = errorMessage;
+                return false;
+            }
+
+            return true;
+        }
+
+        function toggleFields() {
+            var action = document.getElementById("action").value;
+            document.getElementById("idDelete").value = ""; // Clear the user_id field when not deleting
+            document.getElementById("usernameField").style.display = (action === "insert" || action === "update") ? "block" : "none";
+            document.getElementById("passwordField").style.display = (action === "insert" || action === "update") ? "block" : "none";
+            document.getElementById("idFieldUpdate").style.display = (action === "update") ? "block" : "none";
+            document.getElementById("idFieldDelete").style.display = (action === "delete") ? "block" : "none";
+            document.getElementById("error-message").innerHTML = ""; // Clear any previous errors
+            document.getElementById("success-message").innerHTML = ""; // Clear any previous success messages
+        }    </script>
+</head>
+<body>
+
+<div class="container">
+    <h1>Manage Users</h1>
+    <form id="manageForm" action="/manage_user" method="post" onsubmit="return validateForm()">
+    <label for="action">Action:</label>
+    <select name="action" id="action" onchange="toggleFields()">
+        <option value="insert">Insert</option>
+        <option value="update">Update</option>
+        <option value="delete">Delete</option>
+    </select><br><br>
+
+    <div id="usernameField" class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username"><br><br>
+    </div>
+
+    <div id="passwordField" class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password"><br><br>
+    </div>
+
+    <div id="idFieldUpdate" class="form-group" style="display:none;">
+        <label for="idUpdate">User ID (required for update):</label>
+        <input type="number" name="user_id" id="idUpdate"><br><br>
+    </div>
+
+    <div id="idFieldDelete" class="form-group" style="display:none;">
+        <label for="idDelete">User ID (required for delete):</label>
+        <input type="number" name="user_id1" id="idDelete"><br><br>
+    </div>
+
+    <div id="error-message" class="error-message"></div>
+
+    <button type="submit">Submit</button>
+</form></div>
+
+</body>
+</html>
